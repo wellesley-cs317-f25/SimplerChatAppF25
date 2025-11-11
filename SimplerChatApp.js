@@ -1,14 +1,15 @@
 /**
- * A version of SimplerChatApp with only stub screens that don't do anything.
- * This illustrate how to use pseudoScreens with SegmentedButtons and
- * RNPButtons (Lyn's abstraction over ReactNativePaper buttons).
+ * A version of SimplerChatApp with a stub ChatView pseudoscreen that
+ * illustrates nonpersistent email/password authentication --- 
+ * i.e., when the user closes the app when they're signed in,
+ * they need to sign in again when the app relaunches 
  */
 
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SegmentedButtons } from 'react-native-paper';
-import SignInOutPScreen from './components/SignInOutPScreen-stub';
+import SignInOutPScreen from './components/SignInOutPScreen-nonPersistent';
 import ChatViewPScreen from './components/ChatViewPScreen-stub';
 
 import styles from './styles';
