@@ -1,8 +1,9 @@
 /**
- * This is just a nonworking stub for an authentication pseudoScreen
- * for SimplerChatApp.
- * 
- * Pressing a button just displays an alert. 
+ * This is just a stub for an authentication pseudoScreen for SimplerChatApp.
+ * It demonstrates helpful attributes for TextInput text boxes. It also
+ * demonstrates RNPButtons (Lyn's abstraction over ReactNativePaper buttons).
+ * Pressing such a a button just displays the same message in an alert
+ * and the errorMsg area. 
  */
 
 import { useState } from 'react';
@@ -16,28 +17,38 @@ export default function SignInOutPScreen() {
   // const defaultEmail = ... your email here ...
   // const defaultPassword = ... your password here ...
   const defaultEmail = '';
-  const defaultPassword = ''
+  const defaultPassword = 'password' // A terrible password in general, but
+                                     // OK for testing Firebase authentication
 
   /**  State variable for email input; provide default email for testing */
   const [email, setEmail] = useState(defaultEmail); 
+
   /**  State variable for password input; provide default password for testing */
   const [password, setPassword] = useState(defaultPassword); 
+
   /**  State variable for errors and other feedback displayed in red box */
   const [errorMsg, setErrorMsg] = useState(''); 
 
   /**
-   * Wrapper for auth createUserWithEmailAndPassword function that:
-   *   1. Checks email and password input for valdity
-   *   2. Uses errorMsg to tell user to check for verification email 
+   * Stub function that just displays email and password in errorMsg area. 
    */
   async function signUpUserEmailPassword() {
-    alert(`Calling stub function signUpUserEmailPassword()
-with email ${email} and password ${password}`);
+    const msg = `Calling stub function signUpUserEmailPassword()
+with email '${email}' and password '${password}'`;
+    setErrorMsg(msg);
+    // Alternatively could use an alert for feedback:
+    // alert(msg);
   }
 
+  /**
+   * Stub function that just displays email and password in errorMsg area. 
+   */  
   async function signInUserEmailPassword() {
-    alert(`Calling stub function signInUserEmailPassword()
-with email ${email} and password ${password}`);
+    const msg = `Calling stub function signInUserEmailPassword()
+with email '${email}' and password '${password}'`;
+    setErrorMsg(msg);
+    // Alternatively could use an alert for feedback:
+    // alert(msg);
   }
   
   return (

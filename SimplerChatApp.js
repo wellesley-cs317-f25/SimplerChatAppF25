@@ -1,3 +1,9 @@
+/**
+ * A version of SimplerChatApp with only stub screens that don't do anything.
+ * This illustrate how to use pseudoScreens with SegmentedButtons and
+ * RNPButtons (Lyn's abstraction over ReactNativePaper buttons).
+ */
+
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -32,7 +38,7 @@ export default function SimplerChatApp() {
           onValueChange={changePscreen}
           buttons={[
             {
-              value: 'chat2',
+              value: 'login',
               label: 'Login',
             },
             {
