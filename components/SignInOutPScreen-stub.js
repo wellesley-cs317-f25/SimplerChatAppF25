@@ -50,6 +50,85 @@ with email '${email}' and password '${password}'`;
     // Alternatively could use an alert for feedback:
     // alert(msg);
   }
+
+  /*
+   * Attempts to replaced inlined JSX for email input with
+   *   <EmailInput email={email} setEmail={setEmail} setErrorMsg={setErrorMsg} />
+   * below cause keyboard to hide after every character, which is unacceptable.
+   * Lyn doesn't understand yet why this happens, so for now we'll leave inlined
+   * JSX for email input in the returned JSX for SignInOutPScreen. 
+   */
+  const EmailInput = ( { email, setEmail, setErrorMsg } ) => (
+      <View style={styles.labeledInput}>
+        <Text style={styles.inputLabel}>Email:</Text>
+        <TextInput 
+           placeholder='Enter your email address' 
+           style={styles.textInput} 
+           value={email} 
+           onChangeText={ 
+              text => {
+                setEmail(text);
+                setErrorMsg(''); // Clear any error message
+              }
+            }
+            // Helpful settings from CS317 F23 final project team TasteBuds:
+            // 
+            // Note: keyboard type can be one of the following: 
+            // default, number-pad, decimal-pad, numeric, email-address, phone-pad, url
+            keyboardType='email-address'
+            autoCorrect={false}
+            autoCapitalize='none'
+            autoComplete='off'
+          /> 
+      </View>
+  );
+
+    /*
+   * Attempts to replaced inlined JSX for password input with
+   *   <PasswordInput/>
+   * below cause keyboard to hide after every character, which is unacceptable.
+   * Lyn doesn't understand yet why this happens, so for now we'll leave inlined
+   * JSX for password input in the returned JSX for SignInOutPScreen. 
+   */
+  const PasswordInput = () => (
+      <View style={styles.labeledInput}>
+        <Text style={styles.inputLabel}>Password:</Text>
+        <TextInput 
+           placeholder='Enter your password' 
+           style={styles.textInput} 
+           value={password} 
+           onChangeText={ 
+             text => {
+               setPassword(text);
+               setErrorMsg(''); // Clear any error message
+             }
+           }
+           // Helpful settings from CS317 F23 final project team TasteBuds:
+           autoCorrect={false}
+           autoCapitalize='none'
+           autoComplete='off'
+        />
+      </View>
+  );
+
+  const AuthButtons = () => (
+      <View style={styles.buttonHolder}>
+        <RNPButton 
+           title='Sign In' 
+           onPress={signInUserEmailPassword}
+        />
+        <RNPButton 
+           title='Sign Up' 
+           onPress={signUpUserEmailPassword}
+        />
+      </View>
+  );
+
+  const ErrorMsg = ( { errorMsg } ) => (  
+      <View style={errorMsg === '' ? styles.hidden : styles.errorBox}>
+        <Text style={styles.errorMessage}>{errorMsg}</Text>
+      </View>
+  );  
   
   return (
     <View style={styles.screen}>
@@ -91,21 +170,10 @@ with email '${email}' and password '${password}'`;
            autoCorrect={false}
            autoCapitalize='none'
            autoComplete='off'
-         />
-      </View>
-      <View style={styles.buttonHolder}>
-        <RNPButton 
-           title='Sign In' 
-           onPress={signInUserEmailPassword}
-        />
-        <RNPButton 
-           title='Sign Up' 
-           onPress={signUpUserEmailPassword}
         />
       </View>
-      <View style={errorMsg === '' ? styles.hidden : styles.errorBox}>
-        <Text style={styles.errorMessage}>{errorMsg}</Text>
-      </View>
+      <AuthButtons/>
+      <ErrorMsg errorMsg={errorMsg}/>
     </View>
   );
 
