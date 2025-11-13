@@ -9,10 +9,21 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SegmentedButtons } from 'react-native-paper';
-import SignInOutPScreen from './components/SignInOutPScreen-nonPersistent';
 import ChatViewPScreen from './components/ChatViewPScreen-stub';
-
 import styles from './styles';
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Modified and new imports for nonpersistent authentication
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+import { auth } from './firebaseInit-nonPersistentAuth';
+                        
+// pscreen supporting actual authentication
+import SignInOutPScreen from './components/SignInOutPScreen';
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Code below is unchanged from pscreenStubs version *except* for
+ * passing changePscreen property to SignInOutPScreen.
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 export default function SimplerChatApp() {
 
@@ -27,7 +38,7 @@ export default function SimplerChatApp() {
   return (
     <SafeAreaView style={styles.container}>
       {pscreen === "login" &&
-          <SignInOutPScreen/>
+       <SignInOutPScreen changePscreen={changePscreen}/>
       }      
       { pscreen === "chat" &&
         <ChatViewPScreen/>
