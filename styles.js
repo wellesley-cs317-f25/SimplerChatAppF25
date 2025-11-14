@@ -8,7 +8,20 @@ export default StyleSheet.create({
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
-    },
+  },
+  pscreen: {
+      flex: 1,
+      paddingTop: Constants.statusBarHeight,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
+      fontSize: 25
+  },
+  pscreenText: {
+    textAlign: 'center',
+    fontSize: 25
+  },
   jsonContainer: {
       flex: 1,
       width: '98%',
@@ -189,10 +202,6 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-  },
-  pscreenText: {
-    textAlign: 'center',
-    fontSize: 25
   },
   pscreenButtons: {
     // fontSize: 30,

@@ -9,7 +9,6 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SegmentedButtons } from 'react-native-paper';
-import ChatViewPScreen from './components/ChatViewPScreen-stub';
 import styles from './styles';
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,6 +18,7 @@ import { auth } from './firebaseInit-nonPersistentAuth';
                         
 // pscreen supporting actual authentication
 import SignInOutPScreen from './components/SignInOutPScreen';
+import ChatViewPScreen from './components/ChatViewPScreen-authStub';
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Code below is unchanged from pscreenStubs version *except* for
