@@ -10,7 +10,9 @@ import styles from '../styles';
 export default function ChatViewPScreen( { changePscreen } ) {
   return (
     <View style={ styles.pscreen }>
-      <Text>This is just a stub for a pseudoScreen that displays chat messages.</Text>  
+      <Text style={ styles.pscreenText }>
+        This is just a stub for a pseudoScreen that displays chat messages.
+      </Text>  
     </View>
   );
 }

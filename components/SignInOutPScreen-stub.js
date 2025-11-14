@@ -51,15 +51,16 @@ export default function SignInOutPScreen() {
   }
 
   /*
-   * emailInput and passwordInput are component-like functions that
-   * encapsulate TextInput components, but they can't be actual components
-   * (whose names begin with capital letters) because of the issue described in
+   * emailInput and passwordInput are component-like functions (whose names
+   * begin with lowercase letters) that encapsulate TextInput components.
+   * They can't be actual components (whose names begin with capital letters)
+   * because of the issue described in
    *
    *   https://stackoverflow.com/questions/59891992/keyboard-dismisses-while-typing-textinput-in-nested-functional-component-react-n
    *
-   * which causes the keyboard to close after every character is typed.
+   * that causes the keyboard to close after every character is typed.
    * Instead, they must be called as regular functions within JSX to
-   * avoid this problem
+   * avoid this problem.
    */
 
   const emailInput = () => (
@@ -103,17 +104,16 @@ export default function SignInOutPScreen() {
 
   /*
    * Like emailInput and passwordInput above, signInUpPane is a
-   * component-like function rather than an actual component
-   * (whose name begins with a capital letters) because of the issue
-   * described in
+   * component-like function (whose name begins with a lowercase letter)
+   * rather than an actual component (whose name begins with a capital letter)
+   * because of the issue described in
    *
    *   https://stackoverflow.com/questions/59891992/keyboard-dismisses-while-typing-textinput-in-nested-functional-component-react-n
    *
-   * which causes the keyboard to close after every character is typed.
+   * that causes the keyboard to close after every character is typed.
    * Instead, it must be called as regular functions within JSX to
    * avoid this problem.
    */
-
   const signInUpPane = () => (
     // KeyboardAvodingView helps to prevent a keyboard from covering
     // the TextInput component in which text is being entered. See

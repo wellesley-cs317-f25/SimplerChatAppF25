@@ -15,8 +15,6 @@ export default StyleSheet.create({
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
-      textAlign: 'center',
-      fontSize: 25
   },
   pscreenText: {
     textAlign: 'center',
