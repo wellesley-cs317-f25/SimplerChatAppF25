@@ -7,8 +7,9 @@
  */
 
 import { useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Text, TextInput, View } from 'react-native';
 import { RNPButton } from './RNPButton.js'; // Lyn's wrapper for react-native-paper button
+import LabeledTextInput from './LabeledTextInput.js';
 import styles from '../styles';
 
 export default function SignInOutPScreen() {
@@ -21,10 +22,10 @@ export default function SignInOutPScreen() {
                                      // OK for testing Firebase authentication
 
   /**  State variable for email input; provide default email for testing */
-  const [email, setEmail] = useState(defaultEmail); 
+  const [email, setEmail] = useState(defaultEmail);
 
   /**  State variable for password input; provide default password for testing */
-  const [password, setPassword] = useState(defaultPassword); 
+  const [password, setPassword] = useState(defaultPassword);
 
   /**  State variable for errors and other feedback displayed in red box */
   const [errorMsg, setErrorMsg] = useState(''); 
@@ -33,8 +34,7 @@ export default function SignInOutPScreen() {
    * Stub function that just displays email and password in errorMsg area. 
    */
   async function signUpUserEmailPassword() {
-    const msg = `Calling stub function signUpUserEmailPassword()
-with email '${email}' and password '${password}'`;
+    const msg = `Calling stub function signUpUserEmailPassword() with email '${email}' and password '${password}'`;
     setErrorMsg(msg);
     // Alternatively could use an alert for feedback:
     // alert(msg);
@@ -44,55 +44,46 @@ with email '${email}' and password '${password}'`;
    * Stub function that just displays email and password in errorMsg area. 
    */  
   async function signInUserEmailPassword() {
-    const msg = `Calling stub function signInUserEmailPassword()
-with email '${email}' and password '${password}'`;
+    const msg = `Calling stub function signInUserEmailPassword() with email '${email}' and password '${password}'`;
     setErrorMsg(msg);
     // Alternatively could use an alert for feedback:
     // alert(msg);
   }
-  
-  return (
-    <View style={styles.screen}>
-      <View style={styles.labeledInput}>
-        <Text style={styles.inputLabel}>Email:</Text>
-        <TextInput 
-           placeholder='Enter your email address' 
-           style={styles.textInput} 
-           value={email} 
-           onChangeText={ 
-              text => {
-                setEmail(text);
-                setErrorMsg(''); // Clear any error message
-              }
-            }
-            // Helpful settings from CS317 F23 final project team TasteBuds:
-            // 
-            // Note: keyboard type can be one of the following: 
-            // default, number-pad, decimal-pad, numeric, email-address, phone-pad, url
-            keyboardType='email-address'
-            autoCorrect={false}
-            autoCapitalize='none'
-            autoComplete='off'
-          /> 
-      </View>
-      <View style={styles.labeledInput}>
-        <Text style={styles.inputLabel}>Password:</Text>
-        <TextInput 
-           placeholder='Enter your password' 
-           style={styles.textInput} 
-           value={password} 
-           onChangeText={ 
-             text => {
-               setPassword(text);
-               setErrorMsg(''); // Clear any error message
-             }
-           }
-           // Helpful settings from CS317 F23 final project team TasteBuds:
-           autoCorrect={false}
-           autoCapitalize='none'
-           autoComplete='off'
-         />
-      </View>
+
+  /*
+   * emailInput and passwordInput are component-like functions (whose names
+   * begin with lowercase letters) that encapsulate TextInput components.
+   * They can't be actual components (whose names begin with capital letters)
+   * because of the issue described in
+   *
+   *   https://stackoverflow.com/questions/59891992/keyboard-dismisses-while-typing-textinput-in-nested-functional-component-react-n
+   *
+   * that causes the keyboard to close after every character is typed.
+   * Instead, they must be called as regular functions within JSX to
+   * avoid this problem.
+   */
+
+  const emailInput = () => (
+      <LabeledTextInput
+          label='Email:'
+          placeholder='Enter your email'     
+          defaultValue={defaultEmail}
+          onChangeText={ text => {setEmail(text);  setErrorMsg('');} }
+          keyboardType='email-address' // includes @ character
+      />
+  );
+
+  const passwordInput = () => (
+      <LabeledTextInput
+        label='Password:'    
+        placeholder='Enter your password'     
+        defaultValue={password}
+        onChangeText={ text => {setPassword(text);  setErrorMsg('');} }
+        keyboardType='default' // does not include @ character
+      />
+  );
+
+  const AuthButtons = () => (
       <View style={styles.buttonHolder}>
         <RNPButton 
            title='Sign In' 
@@ -103,11 +94,44 @@ with email '${email}' and password '${password}'`;
            onPress={signUpUserEmailPassword}
         />
       </View>
+  );
+
+  const ErrorMsg = () => (  
       <View style={errorMsg === '' ? styles.hidden : styles.errorBox}>
         <Text style={styles.errorMessage}>{errorMsg}</Text>
       </View>
-    </View>
   );
 
+  /*
+   * Like emailInput and passwordInput above, signInUpPane is a
+   * component-like function (whose name begins with a lowercase letter)
+   * rather than an actual component (whose name begins with a capital letter)
+   * because of the issue described in
+   *
+   *   https://stackoverflow.com/questions/59891992/keyboard-dismisses-while-typing-textinput-in-nested-functional-component-react-n
+   *
+   * that causes the keyboard to close after every character is typed.
+   * Instead, it must be called as regular functions within JSX to
+   * avoid this problem.
+   */
+  const signInUpPane = () => (
+    // KeyboardAvodingView helps to prevent a keyboard from covering
+    // the TextInput component in which text is being entered. See
+    //   https://reactnative.dev/docs/keyboardavoidingview
+    // and
+    //   https://www.freecodecamp.org/news/how-to-make-your-react-native-app-respond-gracefully-when-the-keyboard-pops-up-7442c1535580/
+    <KeyboardAvoidingView style={styles.signInOutPane} behavior='padding'>
+      {emailInput()}
+      {passwordInput()}    
+      <AuthButtons/>
+      <ErrorMsg/>
+    </KeyboardAvoidingView>
+  );
+
+  return (
+    <View style={styles.pscreen}>
+      {signInUpPane()}      
+    </View>
+  )
 }
 
