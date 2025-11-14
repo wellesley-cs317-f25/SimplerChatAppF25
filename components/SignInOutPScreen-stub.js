@@ -51,15 +51,36 @@ export default function SignInOutPScreen() {
   }
 
   /*
-   * Attempts to have locally defined LabeledTextInput component here
-   * (rather than one imported from a separate file) empirically just
-   * don't work. The cause the keyboard to hide after every character,
-   * which is unacceptable. This seems to happen for any local component
-   * that encapsulates a TextInput component.
+   * emailInput and passwordInput are component-like functions that
+   * encapsulate TextInput components, but they can't be actual components
+   * (whose names begin with capital letters) because of the issue described in
    *
-   * However, locally defined components that do *not* contain a
-   * TextInput component appear to work fine. 
+   *   https://stackoverflow.com/questions/59891992/keyboard-dismisses-while-typing-textinput-in-nested-functional-component-react-n
+   *
+   * which causes the keyboard to close after every character is typed.
+   * Instead, they must be called as regular functions within JSX to
+   * avoid this problem
    */
+
+  const emailInput = () => (
+      <LabeledTextInput
+          label='Email:'
+          placeholder='Enter your email'     
+          defaultValue={defaultEmail}
+          onChangeText={ text => {setEmail(text);  setErrorMsg('');} }
+          keyboardType='email-address' // includes @ character
+      />
+  );
+
+  const passwordInput = () => (
+      <LabeledTextInput
+        label='Password:'    
+        placeholder='Enter your password'     
+        defaultValue={password}
+        onChangeText={ text => {setPassword(text);  setErrorMsg('');} }
+        keyboardType='default' // does not include @ character
+      />
+  );
 
   const AuthButtons = () => (
       <View style={styles.buttonHolder}>
@@ -74,37 +95,43 @@ export default function SignInOutPScreen() {
       </View>
   );
 
-  const ErrorMsg = ( { errorMsg } ) => (  
+  const ErrorMsg = () => (  
       <View style={errorMsg === '' ? styles.hidden : styles.errorBox}>
         <Text style={styles.errorMessage}>{errorMsg}</Text>
       </View>
-  );  
-  
-  return (
+  );
+
+  /*
+   * Like emailInput and passwordInput above, signInUpPane is a
+   * component-like function rather than an actual component
+   * (whose name begins with a capital letters) because of the issue
+   * described in
+   *
+   *   https://stackoverflow.com/questions/59891992/keyboard-dismisses-while-typing-textinput-in-nested-functional-component-react-n
+   *
+   * which causes the keyboard to close after every character is typed.
+   * Instead, it must be called as regular functions within JSX to
+   * avoid this problem.
+   */
+
+  const signInUpPane = () => (
     // KeyboardAvodingView helps to prevent a keyboard from covering
     // the TextInput component in which text is being entered. See
     //   https://reactnative.dev/docs/keyboardavoidingview
     // and
     //   https://www.freecodecamp.org/news/how-to-make-your-react-native-app-respond-gracefully-when-the-keyboard-pops-up-7442c1535580/
-    <KeyboardAvoidingView style={styles.screen} behavior='padding'>    
-      <LabeledTextInput
-          label='Email:'
-          placeholder='Enter your email'     
-          defaultValue={email}
-          onChangeText={ text => {setEmail(text);  setErrorMsg('');} }
-          keyboardType='email-address' // includes @ character
-      />
-      <LabeledTextInput
-        label='Password:'    
-        placeholder='Enter your password'     
-        defaultValue={password}
-        onChangeText={ text => {setPassword(text);  setErrorMsg('');} }
-        keyboardType='default' // does not include @ character
-      />
+    <KeyboardAvoidingView style={styles.signInOutPane} behavior='padding'>
+      {emailInput()}
+      {passwordInput()}    
       <AuthButtons/>
-      <ErrorMsg errorMsg={errorMsg}/>
+      <ErrorMsg/>
     </KeyboardAvoidingView>
   );
 
+  return (
+    <View style={styles.pscreen}>
+      {signInUpPane()}      
+    </View>
+  )
 }
 
