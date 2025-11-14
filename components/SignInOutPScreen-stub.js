@@ -81,7 +81,12 @@ export default function SignInOutPScreen() {
   );  
   
   return (
-    <View style={styles.screen}>
+    // KeyboardAvodingView helps to prevent a keyboard from covering
+    // the TextInput component in which text is being entered. See
+    //   https://reactnative.dev/docs/keyboardavoidingview
+    // and
+    //   https://www.freecodecamp.org/news/how-to-make-your-react-native-app-respond-gracefully-when-the-keyboard-pops-up-7442c1535580/
+    <KeyboardAvoidingView style={styles.screen} behavior='padding'>    
       <LabeledTextInput
           label='Email:'
           placeholder='Enter your email'     
@@ -98,7 +103,7 @@ export default function SignInOutPScreen() {
       />
       <AuthButtons/>
       <ErrorMsg errorMsg={errorMsg}/>
-    </View>
+    </KeyboardAvoidingView>
   );
 
 }
