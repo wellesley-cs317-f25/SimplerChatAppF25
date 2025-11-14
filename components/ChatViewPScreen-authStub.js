@@ -8,7 +8,7 @@ import styles from '../styles';
 
 import { useSignedInUser } from '../firebaseInit-nonPersistentAuth';
 
-export default function ChatViewPScreen( { changePscreen } ) {
+export default function ChatViewPScreen() {
   const signedInUser = useSignedInUser();
   return (
     <View style={ styles.pscreen }>

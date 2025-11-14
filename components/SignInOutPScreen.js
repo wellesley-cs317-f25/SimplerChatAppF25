@@ -19,13 +19,9 @@ import { KeyboardAvoidingView, Text, TextInput, View } from 'react-native';
 import { RNPButton } from './RNPButton.js'; // Lyn's wrapper for react-native-paper button
 import LabeledTextInput from './LabeledTextInput.js';
 import styles from '../styles';
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * Modified and new imports for nonpersistent authentication
- *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 import { auth,  // Firebase authentication object
          useSignedInUser // hook for tracking whether user is signed in or not
-       } from '../firebaseInit-nonPersistentAuth'; 
+       } from '../firebaseInit-authDb'; // change this init file for this version
 
 import { // for email/password signup (registration):
          createUserWithEmailAndPassword, sendEmailVerification,

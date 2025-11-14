@@ -162,8 +162,12 @@ export default StyleSheet.create({
     borderColor: 'blue',
   },
   textInputArea: {
-    fontSize: 14, 
-    padding: 5,
+      width:'95%',
+      height:100,
+      fontSize: 14, 
+      padding: 5,
+      borderWidth: 1,
+      borderStyle: 'dashed',
   },
   composeButton: {
       alignItems: 'center',

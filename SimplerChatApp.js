@@ -1,8 +1,15 @@
 /**
- * A version of SimplerChatApp with a stub ChatView pseudoscreen that
- * illustrates nonpersistent email/password authentication --- 
- * i.e., when the user closes the app when they're signed in,
- * they need to sign in again when the app relaunches 
+ * A version of SimplerChatApp with a simple ChatView pseudoscreen that
+ * illustrates storing and reading chat messages from the firestore db.
+ * It supports:
+ * 
+ *   1. Populating the simpleMessages collection of the firsetore db
+ *      with fake messages; 
+ *
+ *   2. Explicitly fetching all messages from the simpleMessages collection,
+ *      WHICH IS A REALLY BAD IDEA because each fetch operation of all
+ *      messages can consume a significant part of the daily quota for reading
+ *      messages. See how to avoid this in the pscreenDbRealtime branch.
  */
 
 import { useState } from 'react';
@@ -10,15 +17,15 @@ import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SegmentedButtons } from 'react-native-paper';
 import styles from './styles';
+import SignInOutPScreen from './components/SignInOutPScreen';
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Modified and new imports for nonpersistent authentication
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-import { auth } from './firebaseInit-nonPersistentAuth';
-                        
-// pscreen supporting actual authentication
-import SignInOutPScreen from './components/SignInOutPScreen';
-import ChatViewPScreen from './components/ChatViewPScreen-authStub';
+import { db } from './firebaseInit-authDb';
+
+import ChatViewPScreen from './components/ChatViewPScreen-dbFetch';
+import ComposeMessagePScreen from './components/ComposeMessagePScreen-noImages.js';
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Code below is unchanged from pscreenStubs version *except* for
@@ -30,9 +37,28 @@ export default function SimplerChatApp() {
   /** Current pseudoScreen to display */
   const [pscreen, setPscreen] = useState("login");
 
+  /**  State variable for all message objects */
+  const [allMessages, setAllMessages] = useState([]); 
+
   function changePscreen(pscreenName) {
     console.log(`changing pscreen to ${pscreenName}`);
     setPscreen(pscreenName);
+  }
+
+  /**
+   * @param {string} msg 
+   * 
+   * Post a message to Firebase's Firestore by adding a new document
+   * for the message in the "simpleMessages" collection. It is expected that 
+   * msg is a JavaScript object with fields date, author, and content.
+   */ 
+  async function firestorePostMessage(msg) {
+    console.log(`firebasePostMessage ${JSON.stringify(msg)}`);    
+    const dateString = msg.dateString // ISO time string
+    await setDoc(
+      doc(db, "simpleMessages", dateString), // 1st argument is a doc object 
+      msg // 2nd argument is the doc itself
+    );
   }
 
   return (
@@ -42,6 +68,12 @@ export default function SimplerChatApp() {
       }      
       { pscreen === "chat" &&
         <ChatViewPScreen/>
+      }
+      { pscreen === "compose" &&
+        <ComposeMessagePScreen 
+          changePscreen={changePscreen}
+          postMessage={firstorePostMessage}
+        />
       }
       <View style={{width: '100%'}}>
         <SegmentedButtons
@@ -57,7 +89,8 @@ export default function SimplerChatApp() {
               value: 'chat',
               label: 'Chat',
             },
-          ]}
+          ]},
+          // Don't have option for compose ... 
         />
       </View>
     </SafeAreaView>      
