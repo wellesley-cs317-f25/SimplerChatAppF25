@@ -36,7 +36,7 @@ export default function SignInOutPScreen( {changePscreen} ) {
   // Default email and password (simplifies testing)
   // const defaultEmail = ... your email here ...
   // const defaultPassword = ... your password here ...
-  const defaultEmail = '';
+  const defaultEmail = 'fturbak@wellesley.edu';
   const defaultPassword = 'password' // A terrible password in general, but
                                      // OK for testing Firebase authentication
 
@@ -247,11 +247,11 @@ export default function SignInOutPScreen( {changePscreen} ) {
     <KeyboardAvoidingView
        behavior='padding'
        // Using styles.hidden (with display 'none') and other styles
-       // is another way to hide/show views. 
+       // is another way to hide/show views.
        style={signedInUser?.emailVerified ? styles.hidden : styles.signInOutPane }
-    >	   
+    >
       {emailInput()}
-      {passwordInput()}    
+      {passwordInput()}
       <AuthButtons/>
       <ErrorMsg/>
     </KeyboardAvoidingView>
@@ -260,7 +260,7 @@ export default function SignInOutPScreen( {changePscreen} ) {
   const SignOutPane = () => (
       <View
          // Using styles.hidden (with display 'none') and other styles
-         // is another way to hide/show views. 
+         // is another way to hide/show views.
          style={signedInUser?.emailVerified ? styles.signInOutPane : styles.hidden }
       >
         <Text style={styles.pscreenText}>

@@ -122,6 +122,12 @@ export default StyleSheet.create({
     alignItems: "center",
     backgroundColor: 'white',
   },
+  displayPane: {
+    width:'100%',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   header: {
     marginTop: 10,
     fontSize: 25,

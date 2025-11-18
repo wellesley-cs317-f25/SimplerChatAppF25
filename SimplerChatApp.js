@@ -20,12 +20,14 @@ import styles from './styles';
 import SignInOutPScreen from './components/SignInOutPScreen';
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * Modified and new imports for nonpersistent authentication
+ * Modified and new imports for dbFetch
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 import { db } from './firebaseInit-authDb';
+import { doc, setDoc } from "firebase/firestore";
 
 import ChatViewPScreen from './components/ChatViewPScreen-dbFetch';
 import ComposeMessagePScreen from './components/ComposeMessagePScreen-noImages.js';
+import { testMessages } from './fakeData';
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Code below is unchanged from pscreenStubs version *except* for
@@ -55,6 +57,7 @@ export default function SimplerChatApp() {
   async function firestorePostMessage(msg) {
     console.log(`firebasePostMessage ${JSON.stringify(msg)}`);    
     const dateString = msg.dateString // ISO time string
+    console.log(`firebasePostMessage dateString is ${JSON.stringify(dateString)}`);          
     await setDoc(
       doc(db, "simpleMessages", dateString), // 1st argument is a doc object 
       msg // 2nd argument is the doc itself
@@ -67,12 +70,12 @@ export default function SimplerChatApp() {
        <SignInOutPScreen changePscreen={changePscreen}/>
       }      
       { pscreen === "chat" &&
-        <ChatViewPScreen/>
+        <ChatViewPScreen changePscreen={changePscreen}/>
       }
       { pscreen === "compose" &&
         <ComposeMessagePScreen 
           changePscreen={changePscreen}
-          postMessage={firstorePostMessage}
+          postMessage={firestorePostMessage}
         />
       }
       <View style={{width: '100%'}}>
@@ -89,7 +92,7 @@ export default function SimplerChatApp() {
               value: 'chat',
               label: 'Chat',
             },
-          ]},
+          ]}
           // Don't have option for compose ... 
         />
       </View>
