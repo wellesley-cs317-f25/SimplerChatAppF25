@@ -22,10 +22,7 @@ import SignInOutPScreen from './components/SignInOutPScreen';
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Modified and new imports for dbFetch
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-import { db } from './firebaseInit-authDb';
-import { doc, setDoc } from "firebase/firestore";
-
-import ChatViewPScreen from './components/ChatViewPScreen-dbFetch';
+import ChatViewPScreen from './components/ChatViewPScreen-dbRealtime';
 import ComposeMessagePScreen from './components/ComposeMessagePScreen-noImages.js';
 import { testMessages } from './fakeData';
 
@@ -40,28 +37,11 @@ export default function SimplerChatApp() {
   const [pscreen, setPscreen] = useState("login");
 
   /**  State variable for all message objects */
-  const [allMessages, setAllMessages] = useState([]); 
+  // const [allMessages, setAllMessages] = useState([]); 
 
   function changePscreen(pscreenName) {
     console.log(`changing pscreen to ${pscreenName}`);
     setPscreen(pscreenName);
-  }
-
-  /**
-   * @param {string} msg 
-   * 
-   * Post a message to Firebase's Firestore by adding a new document
-   * for the message in the "simpleMessages" collection. It is expected that 
-   * msg is a JavaScript object with fields date, author, and content.
-   */ 
-  async function firestorePostMessage(msg) {
-    console.log(`firebasePostMessage ${JSON.stringify(msg)}`);    
-    const dateString = msg.dateString // ISO time string
-    console.log(`firebasePostMessage dateString is ${JSON.stringify(dateString)}`);          
-    await setDoc(
-      doc(db, "simpleMessages", dateString), // 1st argument is a doc object 
-      msg // 2nd argument is the doc itself
-    );
   }
 
   return (
@@ -73,10 +53,7 @@ export default function SimplerChatApp() {
         <ChatViewPScreen changePscreen={changePscreen}/>
       }
       { pscreen === "compose" &&
-        <ComposeMessagePScreen 
-          changePscreen={changePscreen}
-          postMessage={firestorePostMessage}
-        />
+        <ComposeMessagePScreen changePscreen={changePscreen}/>
       }
       <View style={{width: '100%'}}>
         <SegmentedButtons

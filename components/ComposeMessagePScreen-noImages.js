@@ -2,10 +2,12 @@ import { useState} from "react";
 import { TextInput, View } from 'react-native';
 import { RNPButton } from './RNPButton.js'; // Lyn's wrapper for react-native-paper button
 import { useSignedInUser // hook for tracking whether user is signed in or not
-       } from '../firebaseInit-authDb'; 
+       } from '../firebaseInit-authDb';
+import { db } from '../firebaseInit-authDb';
+import { doc, setDoc } from "firebase/firestore";
 import styles from '../styles';
 
-export default function ComposeMessagePScreen( {changePscreen, postMessage} ) {
+export default function ComposeMessagePScreen( {changePscreen} ) {
 
   // Components with state variables need to be defined in separate files
   // rather than as helper components within other components. 
@@ -32,8 +34,8 @@ export default function ComposeMessagePScreen( {changePscreen, postMessage} ) {
   /**
     * Post a message to the the currently selected chat room.
     */ 
-  async function postAction() {
-    console.log(`ComposeMessagePScreen-noImages: postAction()`);
+  async function firestorePostAction() {
+    console.log(`ComposeMessagePScreen-noImages: firestorePostAction()`);
     const now = new Date();
     console.log(`ComposeMessagePScreen-noImages: now=${JSON.stringify(now)}`);    
     const dateString = now.toISOString();
@@ -44,7 +46,11 @@ export default function ComposeMessagePScreen( {changePscreen, postMessage} ) {
       'content': textInputValue, 
     }
     console.log(`ComposeMessagePScreen-noImages: newMessage=${JSON.stringify(newMessage)}`);
-    await postMessage(newMessage); // Actually post the message to the current channel
+    await setDoc(
+      doc(db, "simpleMessages", dateString), // 1st argument is a doc object 
+      newMessage // 2nd argument is the doc itself
+    );
+    console.log(`ComposeMessagePScreen-noImages: message posted!`);
     setTextInputValue(''); // clear text input for next time
     changePscreen('chat'); // navigate to chat screen after posting message (in next render)
   }
@@ -60,7 +66,7 @@ export default function ComposeMessagePScreen( {changePscreen, postMessage} ) {
       />
       <View style={styles.buttonHolder}>
         <RNPButton title="Cancel" onPress={cancelAction}/>
-        <RNPButton title="Post" onPress={postAction}/>
+        <RNPButton title="Post" onPress={firestorePostAction}/>
         </View>
       </View>
     );
