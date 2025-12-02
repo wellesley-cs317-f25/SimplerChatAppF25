@@ -1,3 +1,8 @@
+/**
+ * Version of ComposeMessagePscreen that does *not* support adding
+ * an image to a chat message. 
+ */
+
 import { useState} from "react";
 import { TextInput, View } from 'react-native';
 import { RNPButton } from './RNPButton.js'; // Lyn's wrapper for react-native-paper button
