@@ -30,12 +30,12 @@ import { SegmentedButtons } from 'react-native-paper';
 import styles from './styles';
 import { testMessages } from './fakeData';
 import SignInOutPScreen from './components/SignInOutPScreen';
-import ComposeMessagePScreen from './components/ComposeMessagePScreen-noImages';
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Modified and new imports for dbRealtime
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-import ChatViewPScreen from './components/ChatViewPScreen-dbRealtime';
+import ChatViewPScreen from './components/ChatViewPScreen'; // supports images
+import ComposeMessagePScreen from './components/ComposeMessagePScreen'; // supports images
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Code below is unchanged from pscreenStubs version *except* for
