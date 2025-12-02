@@ -217,4 +217,4 @@ export default StyleSheet.create({
     // elevation: 10,
   }
 
-  });
+});

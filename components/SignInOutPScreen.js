@@ -1,10 +1,10 @@
 /**
  * PseudoScreen component for authentication that demonstrates how to do
- * Firebase email/password authentication  (signUp, signIn, and signOut)
+ * Firebase email/password authentication (signUp, signIn, and signOut)
  * in the context of SimplerChatApp.
  * 
  * This version is *nonpersistent*: i.e., when the user closes the app when
- * they're signed in, they need to sign in again when the app relaunches
+ * they're signed in, they need to sign in again when the app relaunches.
  *
  * For simplicity, this combines signUp, signIn, and signOut in a single
  * pseudoScreen, but in your final projects you may want separate screens
@@ -29,14 +29,20 @@ import { // for email/password signup (registration):
          signInWithEmailAndPassword, 
          // for logging out:
          signOut
-  } from "firebase/auth";
+} from "firebase/auth";
 
-export default function SignInOutPScreen( {changePscreen} ) {
+/**
+ * Properties:
+ * 
+ *   + visible (boolean) controls whether this pScreen is visible
+ * 
+ *   + changePscreen (string -> undefined function) changes the pScreen
+ *       to the pScreen named by the string argument. 
+ */
+export default function SignInOutPScreen( {visible, changePscreen} ) {
 
   // Default email and password (simplifies testing)
-  // const defaultEmail = ... your email here ...
-  // const defaultPassword = ... your password here ...
-  const defaultEmail = 'fturbak@wellesley.edu';
+  const defaultEmail = 'fturbak@wellesley.edu'; // change to your email 
   const defaultPassword = 'password' // A terrible password in general, but
                                      // OK for testing Firebase authentication
 
@@ -245,11 +251,13 @@ export default function SignInOutPScreen( {changePscreen} ) {
     // and
     //   https://www.freecodecamp.org/news/how-to-make-your-react-native-app-respond-gracefully-when-the-keyboard-pops-up-7442c1535580/
     <KeyboardAvoidingView
-       behavior='padding'
-       // Using styles.hidden (with display 'none') and other styles
-       // is another way to hide/show views.
-       style={signedInUser?.emailVerified ? styles.hidden : styles.signInOutPane }
-    >
+      behavior='padding'
+      // Using styles.hidden (with display 'none') and other styles is a more
+      // robust way to hide/show views than using the pattern `boolean && View`    
+      style={!visible ? styles.hidden :
+  	       (signedInUser?.emailVerified ? styles.hidden
+	                                    : styles.signInOutPane) }
+      >
       {emailInput()}
       {passwordInput()}
       <AuthButtons/>
@@ -259,10 +267,12 @@ export default function SignInOutPScreen( {changePscreen} ) {
 
   const SignOutPane = () => (
       <View
-         // Using styles.hidden (with display 'none') and other styles
-         // is another way to hide/show views.
-         style={signedInUser?.emailVerified ? styles.signInOutPane : styles.hidden }
-      >
+        // Using styles.hidden (with display 'none') and other styles is a more
+        // robust way to hide/show views than using the pattern `boolean && View`    
+        style={!visible ? styles.hidden :
+ 	        (signedInUser?.emailVerified ? styles.signInOutPane
+ 		                             : styles.hidden) }
+        >
         <Text style={styles.pscreenText}>
           You are signed in as {signedInUser?.email}
         </Text>
@@ -271,10 +281,10 @@ export default function SignInOutPScreen( {changePscreen} ) {
   )
 
   return (
-    <View style={styles.pscreen}>
+    <>
       {signInUpPane()}
       <SignOutPane/>
-    </View>
+    </>
   );
 
 }

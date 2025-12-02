@@ -1,20 +1,22 @@
 /**
  * This is a version of the ChatView pseudoScreen for SimplerChatApp that
- * illustrates storing and reading chat messages from the firestore db.
- * It supports:
- * 
- *   1. Populating the simpleMessages collection of the firsetore db
- *      with fake messages; 
+ * illustrates reading chat messages from the firestore DB using Firestore's
+ * realtime updates feature as described in
  *
- *   2. Explicitly fetching all messages from the simpleMessages collection,
- *      WHICH IS A REALLY BAD IDEA because each fetch operation of all
- *      messages can consume a significant part of the daily quota for reading
- *      messages. See how to avoid this in the pscreenDbRealtime branch.
+ *   https://firebase.google.com/docs/firestore/query-data/listen
+ *
+ * It uses a combination of a query `where` clause and an onSnapshot listener
+ * to minimize the number of chat messages read.
+ * 
+ * Like the pscreenDbFetch version, it also supports populating the
+ * simpleMessages collection of the firestore db with fake messages;
+ *
  */
 
 import { useState, useEffect } from "react";
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { RNPButton } from './RNPButton.js'; // Lyn's wrapper for react-native-paper button
+
 import { db, // Need firestore db for this version
 	 useSignedInUser // This is from authentication-only version 
        } from '../firebaseInit-authDb';
@@ -24,7 +26,15 @@ import * as utils from '../utils';
 import styles from '../styles';
 import { testMessages } from '../fakeData';
 
-export default function ChatViewPScreen( { changePscreen } ) {
+/**
+ * Properties:
+ * 
+ *   + visible (boolean) controls whether this pScreen is visible
+ * 
+ *   + changePscreen (string -> undefined function) changes the pScreen
+ *       to the pScreen named by the string argument. 
+ */
+export default function ChatViewPScreen( { visible, changePscreen } ) {
 
   /**  
    * Elegant way to track signedInUser in any component.
@@ -36,7 +46,12 @@ export default function ChatViewPScreen( { changePscreen } ) {
   const signedInUser = useSignedInUser();
 
   /**  State variable for all message objects */
-  const [allMessages, setAllMessages] = useState([]); 
+  const [allMessages, setAllMessages] = useState([]);
+
+  /**  Add a list of new messages add the end of allMessages */
+  function addNewMessages(newMsgs) {
+    setAllMessages( msgs => [...msgs, ...newMsgs] );     
+  }
 
   /***************************************************************************
    CHAT CHANNEL/MESSAGE CODE
@@ -46,23 +61,47 @@ export default function ChatViewPScreen( { changePscreen } ) {
    * useEffect is a hook for running code when either 
    *   1. The component is entered (created) or exited (destroyed)
    *   2. One of the state variables in the list of dependencies changes.
-   * 
-   * This code gets messages for current channel when entering ChatViewPScreen.
-   * This is *not* the best way to get messages, since it can lead to 
-   * Firestore quota exceeded errors! We will see later how do use
-   * onSnapshot to avoid this issue. 
+   *
+   * This code uses onSnapshot to initially get all messages from the
+   * simpleMessages collection when entering the ChatViewPScreen, but
+   * then listen for "added" changes to automatically add to allMessages
+   * any new messages posted by this user or other users. By minimizing
+   * the reading of messages from the simpleMessages collection, this
+   * helps to avoid the "quota exceeded" issues in less careful approaches.
    */
 
   useEffect(
     () => { 
       console.log('Entering ChatViewPScreen');
-      // const q = query(collection(db, 'simpleMessages'), where('author', '!=', ''));
-      const q = query(collection(db, 'simpleMessages'));      
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const messages = querySnapshot.docs.map(doc => docToMessage(doc));
-        setAllMessages( messages );
-        });
-      
+      let unsubscribe = () => undefined // "do nothing" nullary function
+      // console.log(`In ChatViewPScreen-dbRealtime, signedInUser is ${JSON.stringify(signedInUser)}`);
+      if (signedInUser != null) {
+	const earliestDate = '1970-01-01T00:00:00.000Z' // same as (new Date(0)).toISOString()
+	const latestMessageDate =
+	  allMessages.length === 0 ? earliestDate :
+	    allMessages[allMessages.length - 1].dateString
+	const q = query(collection(db, 'simpleMessages'),
+			// This where clause only retrieves messages more recent
+			// than the last one in allMessages
+			where('dateString', '>', latestMessageDate));
+	unsubscribe = onSnapshot(q, (querySnapshot) => {
+	  // onSnapshot establishes a listener on the firestore db that will be
+	  // informed when new messages appear in the db. For more details, see
+	  // 
+	  //   https://firebase.google.com/docs/firestore/query-data/listen
+	  const newMsgs = [] 
+	  querySnapshot.docChanges().forEach((change) => {
+	    // .docChanges listens for changes on the db. We care only when new
+	    // messages are added, but other types are "removed" and "modified".
+	    if (change.type === "added") {
+	      newMsgs.push(docToMessage(change.doc))
+	    }
+	  });
+	  // Add all new messages to end of allMessages state variable
+	  // without re-reading earlier messages
+	  addNewMessages(newMsgs)
+	});
+      }
       return () => {
         // Executed when exiting component
         console.log('Exiting ChatViewPScreen');
@@ -74,45 +113,10 @@ export default function ChatViewPScreen( { changePscreen } ) {
   ); 
 
   function docToMessage(msgDoc) {
+    const data = msgDoc.data();
+    console.log(`In docToMessage, reading message from db with contents ${JSON.stringify(data)}`);
     return msgDoc.data();
   }
-
-  /* 
-  // Automatically update messages when signedInUser changes
-  useEffect(
-    () => { 
-      console.log('Entering ChatViewPScreen');
-      let unsubscribe = () => console.log('Bogus unsubscribe'); 
-      async function helper () {
-        const getDocsSnapshot = await getDocs(collection(db, "simpleMessages"));
-        console.log(`getDocsSnapshot is ${JSON.stringify(getDocsSnapshot)}`); 
-        const realUnsubscribe = onSnapshot(getDocsSnapshot, (querySnapshot) => {
-	  console.log(`onSnapshot callback invoked with querySnapshot ${JSON.stringify(querySnapshot)}`)
-          const messages = querySnapshot.docs.map(doc => {
-	    console.log(`In querySnapshot.map, doc is ${JSON.stringify(doc)}`); 
-	    const data = doc.data();
-	    console.log(`In querySnapshot.map, data is ${JSON.stringify(data)}`);
-	    return data;
-	  });
-	  setAllMessages(messages)
-        });
-	unsubscribe = () => {
-	  console.log('Real  unsubscribe');
-	  realUnsubscribe();
-	};
-      }
-      helper();
-      return () => {
-        // Executed when exiting component
-        console.log('Exiting ChatViewPScreen');
-        unsubscribe();
-      }
-    },
-    // If any of the following dependencies changes, execute effect again
-    [signedInUser]
-    )
-    ;
-  */
 
   /**
    * Button for displaying debugging information within app itself. 
@@ -243,14 +247,26 @@ export default function ChatViewPScreen( { changePscreen } ) {
 
   return (
     <>
-      <View style={signedInUser?.emailVerified ? styles.hidden : styles.screen }>
+      <View
+        // Using styles.hidden (with display 'none') and other styles is a more
+        // robust way to hide/show views than using the pattern `boolean && View`    
+        style={!visible ? styles.hidden :
+  	         (signedInUser?.emailVerified ? styles.hidden
+		                              : styles.pscreen) }
+      >
         <Text>No user is logged in yet.</Text>
       </View>
-      <View style={signedInUser?.emailVerified ? styles.screen : styles.hidden }>
+      <View
+        // Using styles.hidden (with display 'none') and other styles is a more
+        // robust way to hide/show views than using the pattern `boolean && View`        
+        style={!visible ? styles.hidden :
+	         (signedInUser?.emailVerified ? styles.pscreen
+		  : styles.hidden) }
+      >
         <Text>{signedInUser?.email} is logged in</Text>
         <View style={styles.buttonHolder}>
           <DebugButton visible={true} />      
-          <PopulateButton visible={false} />
+          <PopulateButton visible={true} />
           <RNPButton title="Compose Message" onPress={composeAction}/>
         </View> 
         <DisplayMessagePane/>

@@ -7,7 +7,15 @@ import { db } from '../firebaseInit-authDb';
 import { doc, setDoc } from "firebase/firestore";
 import styles from '../styles';
 
-export default function ComposeMessagePScreen( {changePscreen} ) {
+/**
+ * Properties:
+ * 
+ *   + visible (boolean) controls whether this pScreen is visible
+ * 
+ *   + changePscreen (string -> undefined function) changes the pScreen
+ *       to the pScreen named by the string argument. 
+ */
+export default function ComposeMessagePScreen( {visible, changePscreen} ) {
 
   // Components with state variables need to be defined in separate files
   // rather than as helper components within other components. 
@@ -56,7 +64,7 @@ export default function ComposeMessagePScreen( {changePscreen} ) {
   }
 
   return (
-    <View style={styles.pscreen}>
+    <View style={visible ? styles.pscreen : styles.hidden}>    
       <TextInput
         multiline
         placeholder="message text goes here"
