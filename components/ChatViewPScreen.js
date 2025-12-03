@@ -155,7 +155,7 @@ export default function ChatViewPScreen( { visible, changePscreen } ) {
     alert("Below are values of relevant variables."
           + " You can remove this button by changing the value of"
           + " displayDebugButton from true to false near the top of"
-          + " components/ChatViewScreen.js.\n"
+          + " components/ChatViewPScreen.js.\n"
           + utils.formatJSON(debugObj)); 
   }
 
