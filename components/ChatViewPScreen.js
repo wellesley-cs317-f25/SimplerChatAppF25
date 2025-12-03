@@ -208,7 +208,7 @@ export default function ChatViewPScreen( { visible, changePscreen } ) {
     alert("Firestore has been populated with test messages."
           + " You can remove this button by changing the value of"
           + " displayPopulateButton from true to false near the top of"
-          + " components/ChatViewPScreen-dbFetch.js.");
+          + " components/ChatViewPScreen.js.");
   }
 			  
   /**
