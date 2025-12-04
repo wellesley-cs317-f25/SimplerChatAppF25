@@ -216,14 +216,4 @@ export default StyleSheet.create({
     // backgroundColor: 'yellow',
     // elevation: 10,
   },
-  bigImage: {
-    width: 300,
-    height: 300,
-    margin: 20
-  },
-  thumbnail: {
-    width: 90,
-    height: 90,
-    margin: 10
-  },
 });
