@@ -32,7 +32,7 @@ import { testMessages } from '../fakeData';
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * new imports for dbRealtime-image
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-import { Image } from 'react-native';
+import ExpandableImage from './ExpandableImage.js'; // Lyn's ExpandableImage component
 
 /**
  * Properties:
@@ -232,10 +232,7 @@ export default function ChatViewPScreen( { visible, changePscreen } ) {
         <Text style={styles.messageContent}>{msg.content}</Text>
         {// New for images. Conditionally display image if there is one: 
           msg.imageURL &&
-          <Image
-            style={styles.thumbnail}
-            source={{uri: msg.imageURL}}
-          />
+          <ExpandableImage imageURL={msg.imageURL}/>
         }
       </View> 
     ); 

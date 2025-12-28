@@ -16,7 +16,7 @@ import styles from '../styles';
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * new imports for dbRealtime-image
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-import { Image } from 'react-native';
+import ExpandableImage from './ExpandableImage.js'; // Lyn's ExpandableImage component
 import * as ImagePicker from 'expo-image-picker';
 
 /**
@@ -226,13 +226,10 @@ export default function ComposeMessagePScreen( {visible, changePscreen} ) {
         value={textInputValue} 
         onChangeText={setTextInputValue}
       />
-      {// Conditionally display image if there is one: 
+      {// New for images. Conditionally display image if there is one: 
         deviceImageUri &&
-        <Image
-          style={styles.thumbnail}
-          source={{uri: deviceImageUri}}
-        />
-      }
+        <ExpandableImage imageURL={deviceImageUri}/>
+      }      
       <View style={styles.buttonHolder}>
         <RNPButton title="Cancel" onPress={cancelAction}/>
         <RNPButton title="Add Image"onPress={addImageAction}/>      
